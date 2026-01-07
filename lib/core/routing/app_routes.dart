@@ -1,5 +1,6 @@
 import 'package:chat/core/routing/routes.dart';
 import 'package:chat/presentation/auth/login_view.dart';
+import 'package:chat/presentation/auth/register_view.dart';
 import 'package:chat/presentation/chat/chat_view.dart';
 import 'package:chat/presentation/chat/home_view.dart';
 import 'package:flutter/foundation.dart';
@@ -25,6 +26,11 @@ abstract class AppRoutes {
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => const ChatView(),
+        );
+      case Routes.register:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (context) => const RegisterView(),
         );
       default:
         return MaterialPageRoute(

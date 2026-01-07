@@ -4,19 +4,20 @@ import 'package:chat/core/routing/routes.dart';
 import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
-class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Form(
         key: _formKey,
         child: Column(
@@ -53,14 +54,14 @@ class _LoginViewState extends State<LoginView> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: const Text('Login'),
+                child: const Text('Sign Up'),
               ),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(Routes.register);
+                Navigator.pop(context);
               },
-              child: const Text("Don't have account ? register"),
+              child: const Text("Already have account ? Login"),
             ),
           ],
         ).horizontalPadding(16),
