@@ -7,22 +7,16 @@ import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: ThemeProvider(),
-      builder: (context, child) {
-        var provider = Provider.of<ThemeProvider>(context);
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          themeMode: provider.appTheme,
-          darkTheme: AppTheme.darkTheme,
-          onGenerateRoute: AppRoutes.generateRoute,
-          initialRoute: Routes.login,
-        );
-      },
+    var provider = Provider.of<ThemeProvider>(context);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      themeMode: provider.appTheme,
+      darkTheme: AppTheme.darkTheme,
+      onGenerateRoute: AppRoutes.generateRoute,
+      initialRoute: Routes.login,
     );
   }
 }

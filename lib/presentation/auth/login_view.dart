@@ -1,10 +1,8 @@
 import 'package:chat/core/extensions/context_extension.dart';
 import 'package:chat/core/extensions/padding_extension.dart';
 import 'package:chat/core/routing/routes.dart';
-import 'package:chat/core/theme/theme_provider.dart';
 import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -15,15 +13,9 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       body: Form(
         key: _formKey,
@@ -31,16 +23,6 @@ class _LoginViewState extends State<LoginView> {
           spacing: 16,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FilledButton(
-              onPressed: () {
-                provider.changeTheme(
-                  provider.appTheme == ThemeMode.dark
-                      ? ThemeMode.light
-                      : ThemeMode.dark,
-                );
-              },
-              child: const Text('theme'),
-            ),
             Text(
               'Chat App',
               style: context.textTheme.titleLarge!.copyWith(
