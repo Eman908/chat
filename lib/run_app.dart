@@ -15,11 +15,12 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         var provider = Provider.of<ThemeProvider>(context);
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           themeMode: provider.appTheme,
           darkTheme: AppTheme.darkTheme,
           onGenerateRoute: AppRoutes.generateRoute,
-          initialRoute: Routes.home,
+          initialRoute: Routes.login,
         );
       },
     );
