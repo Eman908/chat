@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.token});
+  final String? token;
   @override
   Widget build(BuildContext context) {
     var provider = Provider.of<ThemeProvider>(context);
@@ -20,3 +21,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+//token != null ? Routes.home :

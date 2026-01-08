@@ -13,6 +13,7 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.prefixText,
     this.enabled,
+    this.autofillHints,
   });
   final String hintText;
   final bool isPassword;
@@ -24,6 +25,7 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? suffix;
   final String? prefixText;
   final bool? enabled;
+  final Iterable<String>? autofillHints;
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -32,8 +34,10 @@ class CustomTextFormField extends StatelessWidget {
       onChanged: onChanged,
       obscureText: isPassword,
       keyboardType: keyboardType,
+      autofillHints: autofillHints,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
+      enableSuggestions: !isPassword,
       decoration: InputDecoration(
         prefixText: prefixText,
         prefixIcon: Icon(prefix),

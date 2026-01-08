@@ -13,6 +13,12 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../../data/data_source/contract/firebase_data_source.dart' as _i417;
+import '../../data/data_source/impl/firebase_data_source_impl.dart' as _i997;
+import '../../data/firebase/firebase_service.dart' as _i73;
+import '../../data/repo/auth_repo_impl.dart' as _i0;
+import '../../domain/repo/auth_repo.dart' as _i716;
+import '../../presentation/auth/cubit/auth_cubit.dart' as _i1063;
 import '../theme/theme_provider.dart' as _i416;
 import 'modules/shared_preference_module.dart' as _i890;
 
@@ -29,6 +35,10 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.factory<_i416.ThemeProvider>(() => _i416.ThemeProvider());
+    gh.factory<_i1063.AuthCubit>(() => _i1063.AuthCubit());
+    gh.singleton<_i73.FirebaseService>(() => _i73.FirebaseService());
+    gh.factory<_i417.FirebaseDataSource>(() => _i997.FirebaseDataSourceImpl());
+    gh.factory<_i716.AuthRepo>(() => _i0.AuthRepoImpl());
     return this;
   }
 }
