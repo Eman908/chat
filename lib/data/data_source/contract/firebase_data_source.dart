@@ -5,6 +5,7 @@ abstract class FirebaseDataSource {
   Future<Results<User>> registerUser({
     required String email,
     required String password,
+    required String name,
   });
   Future<Results<User>> loginUser({
     required String email,

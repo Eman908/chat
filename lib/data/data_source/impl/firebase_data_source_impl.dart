@@ -14,11 +14,13 @@ class FirebaseDataSourceImpl implements FirebaseDataSource {
   Future<Results<User>> registerUser({
     required String email,
     required String password,
+    required String name,
   }) async {
     return safeCall(() async {
       var response = await _firebaseService.registerUser(
         email: email,
         password: password,
+        name: name,
       );
       if (response.user?.uid.isEmpty ?? true) {
         return Failure(message: 'Something Wrong');

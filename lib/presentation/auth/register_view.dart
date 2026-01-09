@@ -16,6 +16,7 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   late AuthCubit authCubit;
@@ -31,6 +32,7 @@ class _RegisterViewState extends State<RegisterView> {
     // TODO: implement dispose
     super.dispose();
     email.dispose();
+    name.dispose();
     password.dispose();
   }
 
@@ -72,6 +74,16 @@ class _RegisterViewState extends State<RegisterView> {
               ),
               CustomTextFormField(
                 validator: (value) {
+                  return Validation.validateName(value);
+                },
+                controller: name,
+                hintText: 'Name',
+                autofillHints: const [AutofillHints.name],
+                prefix: Icons.person,
+                keyboardType: TextInputType.name,
+              ),
+              CustomTextFormField(
+                validator: (value) {
                   return Validation.validateEmail(value);
                 },
                 controller: email,
@@ -104,6 +116,7 @@ class _RegisterViewState extends State<RegisterView> {
                                 await authCubit.registerUser(
                                   email: email.text,
                                   password: password.text,
+                                  name: name.text,
                                 );
                               }
                             },

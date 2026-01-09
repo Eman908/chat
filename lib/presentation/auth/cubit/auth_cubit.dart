@@ -14,6 +14,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> registerUser({
     required String email,
     required String password,
+    required String name,
   }) async {
     if (!isClosed) {
       emit(RegisterLoading());
@@ -21,6 +22,7 @@ class AuthCubit extends Cubit<AuthState> {
     var response = await _authRepo.registerUser(
       email: email,
       password: password,
+      name: name,
     );
     switch (response) {
       case Success<UserModel>():
