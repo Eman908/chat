@@ -7,4 +7,7 @@ abstract class ChatRepo {
     required String currentUserId,
     required String otherUserId,
   });
+  Future<Results<List<UserModel>>> loadUserChats({
+    required String currentUserId,
+  });
 }

@@ -1,26 +1,38 @@
 import 'package:chat/data/models/user_model.dart';
 
-sealed class ChatState {}
+abstract class ChatState {}
 
-final class ChatInitial extends ChatState {}
+class ChatInitial extends ChatState {}
 
-final class SearchSuccess extends ChatState {
+class ChatListLoading extends ChatState {}
+
+class ChatListSuccess extends ChatState {
+  final List<UserModel> users;
+  ChatListSuccess(this.users);
+}
+
+class ChatListFailure extends ChatState {
+  final String message;
+  ChatListFailure({required this.message});
+}
+
+class SearchLoading extends ChatState {}
+
+class SearchSuccess extends ChatState {
   final UserModel user;
   SearchSuccess(this.user);
 }
 
-final class SearchFailure extends ChatState {
+class SearchFailure extends ChatState {
   final String message;
   SearchFailure({required this.message});
 }
 
-final class SearchLoading extends ChatState {}
+class CreateChatLoading extends ChatState {}
 
-final class CreateChatSuccess extends ChatState {}
+class CreateChatSuccess extends ChatState {}
 
-final class CreateChatFailure extends ChatState {
+class CreateChatFailure extends ChatState {
   final String message;
   CreateChatFailure({required this.message});
 }
-
-final class CreateChatLoading extends ChatState {}

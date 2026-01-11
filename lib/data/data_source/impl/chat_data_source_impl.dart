@@ -32,6 +32,18 @@ class ChatDataSourceImpl implements ChatDataSource {
   }
 
   @override
+  Future<Results<List<UserModel>>> loadUserChats({
+    required String currentUserId,
+  }) async {
+    return safeCall(() async {
+      final users = await _chatsService.getUsersFromChats(
+        currentUserId: currentUserId,
+      );
+      return Success(users);
+    });
+  }
+
+  @override
   Future<Results<void>> createChat({
     required String currentUserId,
     required String otherUserId,

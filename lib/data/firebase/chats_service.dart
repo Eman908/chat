@@ -51,6 +51,43 @@ class ChatsService {
     return doc.exists;
   }
 
+  Future<List<UserModel>> getUsersFromChats({
+    required String currentUserId,
+  }) async {
+    try {
+      final chatsSnapshot = await _getChatsCollection()
+          .where('participants', arrayContains: currentUserId)
+          .get();
+
+      final users = <UserModel>[];
+
+      for (final chatDoc in chatsSnapshot.docs) {
+        final participants = List<String>.from(chatDoc['participants'] ?? []);
+
+        final otherUserId = participants.firstWhere(
+          (id) => id != currentUserId,
+          orElse: () => '',
+        );
+
+        if (otherUserId.isNotEmpty) {
+          final userDoc = await _firestore
+              .collection('users')
+              .doc(otherUserId)
+              .get();
+
+          if (userDoc.exists) {
+            final user = UserModel.fromJson(userDoc.data()!);
+            users.add(user);
+          }
+        }
+      }
+
+      return users;
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<UserModel?> searchUserWithChatCheck({
     required String email,
     required String currentUserId,

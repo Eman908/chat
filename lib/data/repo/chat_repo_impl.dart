@@ -15,6 +15,13 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
+  Future<Results<List<UserModel>>> loadUserChats({
+    required String currentUserId,
+  }) async {
+    return await _chatDataSource.loadUserChats(currentUserId: currentUserId);
+  }
+
+  @override
   Future<Results<void>> createChat({
     required String currentUserId,
     required String otherUserId,

@@ -14,6 +14,8 @@ class ChatCubit extends Cubit<ChatState> {
   final ChatRepo _chatRepo = getIt();
   final SharedPreferences _preferences = getIt();
 
+  List<UserModel> chatUsers = [];
+
   Future<void> searchUser(String email) async {
     emit(SearchLoading());
 
@@ -24,6 +26,32 @@ class ChatCubit extends Cubit<ChatState> {
         emit(SearchSuccess(response.data!));
       case Failure<UserModel>():
         emit(SearchFailure(message: response.message ?? 'User not found'));
+    }
+  }
+
+  Future<void> loadChats() async {
+    emit(ChatListLoading());
+
+    final currentUserId = _preferences.getString(AppConstants.kUid) ?? '';
+
+    if (currentUserId.isEmpty) {
+      emit(ChatListFailure(message: 'User not logged in'));
+      return;
+    }
+
+    final response = await _chatRepo.loadUserChats(
+      currentUserId: currentUserId,
+    );
+
+    switch (response) {
+      case Success<List<UserModel>>():
+        chatUsers = response.data ?? [];
+        emit(ChatListSuccess(chatUsers));
+
+      case Failure<List<UserModel>>():
+        emit(
+          ChatListFailure(message: response.message ?? 'Failed to load chats'),
+        );
     }
   }
 
@@ -39,7 +67,11 @@ class ChatCubit extends Cubit<ChatState> {
 
     switch (response) {
       case Success<void>():
+        if (!chatUsers.any((user) => user.uId == otherUser.uId)) {
+          chatUsers.add(otherUser);
+        }
         emit(CreateChatSuccess());
+
       case Failure<void>():
         emit(
           CreateChatFailure(
