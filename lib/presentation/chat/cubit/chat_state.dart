@@ -1,3 +1,4 @@
+import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/user_model.dart';
 
 abstract class ChatState {}
@@ -7,7 +8,7 @@ class ChatInitial extends ChatState {}
 class ChatListLoading extends ChatState {}
 
 class ChatListSuccess extends ChatState {
-  final List<UserModel> users;
+  final ChatAndUsers users;
   ChatListSuccess(this.users);
 }
 
@@ -26,13 +27,4 @@ class SearchSuccess extends ChatState {
 class SearchFailure extends ChatState {
   final String message;
   SearchFailure({required this.message});
-}
-
-class CreateChatLoading extends ChatState {}
-
-class CreateChatSuccess extends ChatState {}
-
-class CreateChatFailure extends ChatState {
-  final String message;
-  CreateChatFailure({required this.message});
 }

@@ -1,4 +1,5 @@
 import 'package:chat/core/constants/app_constants.dart';
+import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/chat_model.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,43 +27,102 @@ class ChatsService {
         );
   }
 
-  String _buildChatId(String uid1, String uid2) {
-    return uid1.compareTo(uid2) < 0 ? '${uid1}_$uid2' : '${uid2}_$uid1';
-  }
-
   Future<void> addUserToFirestore(UserModel user) {
     return _getUserCollection().doc(user.uId).set(user);
   }
 
-  Future<void> addChatToFirestore(ChatModel chat) async {
-    final chatDoc = _getChatsCollection().doc(chat.chatId);
-    final exists = await chatDoc.get();
-    if (!exists.exists) {
-      await chatDoc.set(chat);
+  Future<UserModel>? addUserByEmail(String email, String currentUserId) async {
+    var data = await _getUserCollection()
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (data.docs.isEmpty) {
+      throw Exception('There is no user with this email');
     }
+    final otherUserId = data.docs.first.data().uId;
+    bool isExisted = await isChatExistsBetween(
+      currentUserId,
+      otherUserId ?? '',
+    );
+    if (isExisted) {
+      throw Exception('Already Added');
+    }
+    if (data.docs.first.data().uId == currentUserId) {
+      throw Exception('This is the current user');
+    }
+    final getOtherUserId = data.docs.first.data().uId;
+    await createChat(
+      currentUserId: currentUserId,
+      otherUserId: getOtherUserId ?? '',
+    );
+    return data.docs.first.data();
+  }
+
+  Future<void> createChat({
+    required String currentUserId,
+    required String otherUserId,
+  }) async {
+    try {
+      final chatId = _buildChatId(currentUserId, otherUserId);
+
+      final existingChat = await _getChatsCollection().doc(chatId).get();
+      if (existingChat.exists) {
+        throw Exception('Chat already exists');
+      }
+
+      final chat = ChatModel(
+        chatId: chatId,
+        lastMessage: 'No messages yet',
+        participants: [currentUserId, otherUserId],
+      );
+
+      await _getChatsCollection().doc(chatId).set(chat);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  String _buildChatId(String uid1, String uid2) {
+    return uid1.compareTo(uid2) < 0 ? '${uid1}_$uid2' : '${uid2}_$uid1';
+  }
+
+  Future<void> addChatToFirestore(ChatModel chat) async {
+    return _getChatsCollection().doc(chat.chatId).set(chat);
   }
 
   Future<bool> isChatExistsBetween(
     String currentUserId,
     String otherUserId,
   ) async {
-    final chatId = _buildChatId(currentUserId, otherUserId);
-    final doc = await _getChatsCollection().doc(chatId).get();
-    return doc.exists;
+    String chatId = _buildChatId(currentUserId, otherUserId);
+    var data = await _getChatsCollection().doc(chatId).get();
+    if (data.exists) {
+      return true;
+    }
+    return false;
   }
 
-  Future<List<UserModel>> getUsersFromChats({
-    required String currentUserId,
-  }) async {
+  Future<ChatAndUsers> getUserChatsAndData(String currentUserId) async {
     try {
-      final chatsSnapshot = await _getChatsCollection()
+      final chatsData = await _getChatsCollection()
           .where('participants', arrayContains: currentUserId)
           .get();
 
+      final chats = <ChatModel>[];
       final users = <UserModel>[];
 
-      for (final chatDoc in chatsSnapshot.docs) {
-        final participants = List<String>.from(chatDoc['participants'] ?? []);
+      for (final chatDoc in chatsData.docs) {
+        if (!chatDoc.exists) continue;
+
+        final chat = chatDoc.data();
+        final participants = chat.participants ?? [];
+
+        if (participants.isEmpty || !participants.contains(currentUserId)) {
+          continue;
+        }
+
+        chats.add(chat);
 
         final otherUserId = participants.firstWhere(
           (id) => id != currentUserId,
@@ -70,65 +130,21 @@ class ChatsService {
         );
 
         if (otherUserId.isNotEmpty) {
-          final userDoc = await _firestore
-              .collection('users')
-              .doc(otherUserId)
-              .get();
-
-          if (userDoc.exists) {
-            final user = UserModel.fromJson(userDoc.data()!);
-            users.add(user);
-          }
+          try {
+            final userDoc = await _getUserCollection().doc(otherUserId).get();
+            if (userDoc.exists) {
+              final user = userDoc.data();
+              if (user != null) {
+                users.add(user);
+              }
+            }
+          } catch (e) {}
         }
       }
 
-      return users;
+      return ChatAndUsers(chats: chats, users: users);
     } catch (e) {
-      return [];
-    }
-  }
-
-  Future<UserModel?> searchUserWithChatCheck({
-    required String email,
-    required String currentUserId,
-  }) async {
-    final querySnapshot = await _getUserCollection()
-        .where('email', isEqualTo: email.trim().toLowerCase())
-        .limit(1)
-        .get();
-
-    if (querySnapshot.docs.isEmpty) return null;
-
-    final otherUser = querySnapshot.docs.first.data();
-
-    if (otherUser.uId == currentUserId) {
-      throw Exception('This is the current user');
-    }
-
-    final chatExists = await isChatExistsBetween(currentUserId, otherUser.uId!);
-    if (chatExists) {
-      throw Exception('Chat already exists with this user');
-    }
-
-    return otherUser;
-  }
-
-  Future<void> createChatIfNotExists({
-    required String currentUserId,
-    required String otherUserId,
-  }) async {
-    final chatId = _buildChatId(currentUserId, otherUserId);
-
-    final chatDoc = _getChatsCollection().doc(chatId);
-    final exists = await chatDoc.get();
-
-    if (!exists.exists) {
-      final chat = ChatModel(
-        chatId: chatId,
-        participants: [currentUserId, otherUserId],
-        lastMessage: '',
-      );
-      await chatDoc.set(chat);
+      return ChatAndUsers(chats: [], users: []);
     }
   }
 }

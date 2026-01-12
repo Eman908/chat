@@ -1,6 +1,7 @@
 import 'package:chat/core/di/di.dart';
 import 'package:chat/core/error/results.dart';
 import 'package:chat/data/data_source/contract/chat_data_source.dart';
+import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:chat/domain/repo/chat_repo.dart';
 import 'package:injectable/injectable.dart';
@@ -15,20 +16,9 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<Results<List<UserModel>>> loadUserChats({
+  Future<Results<ChatAndUsers>> loadUserChats({
     required String currentUserId,
   }) async {
     return await _chatDataSource.loadUserChats(currentUserId: currentUserId);
-  }
-
-  @override
-  Future<Results<void>> createChat({
-    required String currentUserId,
-    required String otherUserId,
-  }) async {
-    return await _chatDataSource.createChat(
-      currentUserId: currentUserId,
-      otherUserId: otherUserId,
-    );
   }
 }

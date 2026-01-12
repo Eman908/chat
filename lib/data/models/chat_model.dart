@@ -1,7 +1,7 @@
 class ChatModel {
   String? chatId;
   String? lastMessage;
-  List<String>? participants;
+  List<dynamic>? participants;
 
   ChatModel({this.chatId, this.lastMessage, this.participants});
   factory ChatModel.fromJson(Map<String, dynamic> json) {

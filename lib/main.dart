@@ -19,6 +19,7 @@ void main() async {
   SharedPreferences pref = getIt();
   var token = pref.getString(AppConstants.kToken);
   Bloc.observer = MyBlocObserver();
+
   runApp(
     ChangeNotifierProvider.value(
       value: provider,

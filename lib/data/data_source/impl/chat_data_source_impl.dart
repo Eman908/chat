@@ -4,6 +4,7 @@ import 'package:chat/core/error/results.dart';
 import 'package:chat/core/error/safe_call.dart';
 import 'package:chat/data/data_source/contract/chat_data_source.dart';
 import 'package:chat/data/firebase/chats_service.dart';
+import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,46 +15,27 @@ class ChatDataSourceImpl implements ChatDataSource {
   final SharedPreferences _preferences = getIt();
 
   @override
+  Future<Results<ChatAndUsers>> loadUserChats({
+    required String currentUserId,
+  }) async {
+    return safeCall(() async {
+      final users = await _chatsService.getUserChatsAndData(currentUserId);
+      return Success(users);
+    });
+  }
+
+  @override
   Future<Results<UserModel>> searchUser({required String email}) async {
     return safeCall(() async {
       final currentUserId = _preferences.getString(AppConstants.kUid) ?? '';
 
-      final user = await _chatsService.searchUserWithChatCheck(
-        email: email,
-        currentUserId: currentUserId,
-      );
+      final user = await _chatsService.addUserByEmail(email, currentUserId);
 
       if (user == null) {
         return Failure(message: 'User not found');
       }
 
       return Success(user);
-    });
-  }
-
-  @override
-  Future<Results<List<UserModel>>> loadUserChats({
-    required String currentUserId,
-  }) async {
-    return safeCall(() async {
-      final users = await _chatsService.getUsersFromChats(
-        currentUserId: currentUserId,
-      );
-      return Success(users);
-    });
-  }
-
-  @override
-  Future<Results<void>> createChat({
-    required String currentUserId,
-    required String otherUserId,
-  }) async {
-    return safeCall(() async {
-      await _chatsService.createChatIfNotExists(
-        currentUserId: currentUserId,
-        otherUserId: otherUserId,
-      );
-      return Success(null);
     });
   }
 }
