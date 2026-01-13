@@ -96,6 +96,12 @@ class _LoginViewState extends State<LoginView> {
                 email: email,
                 password: password,
               ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.register);
+                },
+                child: const Text("Don't have account ? Register"),
+              ),
             ],
           ).horizontalPadding(16),
         ),

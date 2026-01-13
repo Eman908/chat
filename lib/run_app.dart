@@ -28,9 +28,8 @@ class MyApp extends StatelessWidget {
         themeMode: provider.appTheme,
         darkTheme: AppTheme.darkTheme,
         onGenerateRoute: AppRoutes.generateRoute,
-        initialRoute: Routes.home,
+        initialRoute: token != null ? Routes.home : Routes.login,
       ),
     );
   }
 }
-//token != null ? Routes.home :

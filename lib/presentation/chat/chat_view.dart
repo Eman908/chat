@@ -1,5 +1,6 @@
 import 'package:chat/core/constants/app_constants.dart';
 import 'package:chat/core/di/di.dart';
+import 'package:chat/core/extensions/context_extension.dart';
 import 'package:chat/core/extensions/padding_extension.dart';
 import 'package:chat/data/models/message_model.dart';
 import 'package:chat/domain/repo/chat_repo.dart';
@@ -103,6 +104,7 @@ class _ChatViewState extends State<ChatView> {
               children: [
                 Expanded(
                   child: TextField(
+                    style: TextStyle(color: context.color.onPrimary),
                     controller: message,
                     textInputAction: TextInputAction.send,
                     focusNode: _focusNode,
