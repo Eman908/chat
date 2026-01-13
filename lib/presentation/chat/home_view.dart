@@ -3,15 +3,14 @@ import 'package:chat/core/di/di.dart';
 import 'package:chat/core/extensions/context_extension.dart';
 import 'package:chat/core/routing/routes.dart';
 import 'package:chat/core/theme/app_colors.dart';
-import 'package:chat/core/theme/theme_provider.dart';
 import 'package:chat/data/firebase/firebase_service.dart';
-import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
 import 'package:chat/presentation/chat/chat_cubit/chat_cubit.dart';
 import 'package:chat/presentation/chat/chat_cubit/chat_state.dart';
 import 'package:chat/presentation/chat/widgets/chat_card.dart';
+import 'package:chat/presentation/chat/widgets/home_floating_button.dart';
+import 'package:chat/presentation/chat/widgets/theme_change_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeView extends StatefulWidget {
@@ -43,7 +42,6 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return BlocConsumer<ChatCubit, ChatState>(
       builder: (context, state) {
-        var provider = Provider.of<ThemeProvider>(context);
         return Scaffold(
           appBar: AppBar(
             title: Text(_preferences.getString(AppConstants.kName) ?? 'chats'),
@@ -55,77 +53,10 @@ class _HomeViewState extends State<HomeView> {
                 },
                 icon: const Icon(Icons.logout, color: Colors.red),
               ),
-              IconButton(
-                onPressed: () {
-                  ThemeMode newTheme;
-                  switch (provider.appTheme) {
-                    case ThemeMode.dark:
-                      newTheme = ThemeMode.light;
-                      break;
-                    case ThemeMode.light:
-                      newTheme = ThemeMode.system;
-                      break;
-                    case ThemeMode.system:
-                      newTheme = ThemeMode.dark;
-                  }
-                  provider.changeTheme(newTheme);
-                },
-                icon: Icon(
-                  provider.appTheme == ThemeMode.dark
-                      ? Icons.dark_mode
-                      : provider.appTheme == ThemeMode.light
-                      ? Icons.light_mode
-                      : Icons.brightness_auto,
-                ),
-              ),
+              const ThemeChangeButton(),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              email.clear();
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog.adaptive(
-                  constraints: BoxConstraints(
-                    minWidth: context.widthSized - 16,
-                  ),
-                  title: const Text('Add New Friend'),
-                  content: CustomTextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    autofillHints: const [AutofillHints.email],
-                    controller: email,
-                    hintText: 'E-mail',
-                    prefix: Icons.email,
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        email.clear();
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                    BlocBuilder<ChatCubit, ChatState>(
-                      builder: (context, state) {
-                        return TextButton(
-                          onPressed: () {
-                            cubit.addChat(email.text);
-                          },
-                          child: state is SearchLoading
-                              ? const CircularProgressIndicator()
-                              : const Text('Search'),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-            child: const Icon(Icons.add),
-          ),
+          floatingActionButton: HomeFloatingButton(email: email, cubit: cubit),
           body: _buildBody(state),
         );
       },
@@ -222,3 +153,4 @@ class _HomeViewState extends State<HomeView> {
     return const SizedBox();
   }
 }
+

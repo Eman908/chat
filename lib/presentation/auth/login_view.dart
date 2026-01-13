@@ -5,9 +5,9 @@ import 'package:chat/core/utils/validation.dart';
 import 'package:chat/presentation/auth/cubit/auth_cubit.dart';
 import 'package:chat/presentation/auth/cubit/auth_state.dart';
 import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
+import 'package:chat/presentation/auth/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -23,14 +23,12 @@ class _LoginViewState extends State<LoginView> {
   late AuthCubit _authCubit;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _authCubit = context.read<AuthCubit>();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     email.dispose();
     password.dispose();
@@ -92,39 +90,11 @@ class _LoginViewState extends State<LoginView> {
                 isPassword: true,
                 keyboardType: TextInputType.visiblePassword,
               ),
-              BlocBuilder<AuthCubit, AuthState>(
-                builder: (context, state) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: FilledButton(
-                      onPressed: state is LoginLoading
-                          ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                await _authCubit.loginUser(
-                                  email: email.text,
-                                  password: password.text,
-                                );
-                              }
-                            },
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: state is LoginLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Login'),
-                    ),
-                  );
-                },
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.register);
-                },
-                child: const Text("Don't have account ? register"),
+              LoginButton(
+                formKey: _formKey,
+                authCubit: _authCubit,
+                email: email,
+                password: password,
               ),
             ],
           ).horizontalPadding(16),

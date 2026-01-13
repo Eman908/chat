@@ -4,6 +4,7 @@ import 'package:chat/core/utils/validation.dart';
 import 'package:chat/presentation/auth/cubit/auth_cubit.dart';
 import 'package:chat/presentation/auth/cubit/auth_state.dart';
 import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
+import 'package:chat/presentation/auth/widgets/register_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,14 +23,12 @@ class _RegisterViewState extends State<RegisterView> {
   late AuthCubit authCubit;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     authCubit = context.read<AuthCubit>();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     email.dispose();
     name.dispose();
@@ -103,34 +102,12 @@ class _RegisterViewState extends State<RegisterView> {
                 isPassword: true,
                 keyboardType: TextInputType.visiblePassword,
               ),
-              BlocBuilder<AuthCubit, AuthState>(
-                builder: (context, state) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: FilledButton(
-                      onPressed: state is RegisterLoading
-                          ? null
-                          : () async {
-                              if (_formKey.currentState!.validate()) {
-                                await authCubit.registerUser(
-                                  email: email.text,
-                                  password: password.text,
-                                  name: name.text,
-                                );
-                              }
-                            },
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      child: state is RegisterLoading
-                          ? const CircularProgressIndicator()
-                          : const Text('Sign Up'),
-                    ),
-                  );
-                },
+              RegisterButton(
+                formKey: _formKey,
+                authCubit: authCubit,
+                email: email,
+                password: password,
+                name: name,
               ),
               TextButton(
                 onPressed: () {
