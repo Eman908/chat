@@ -5,6 +5,7 @@ import 'package:chat/core/error/safe_call.dart';
 import 'package:chat/data/data_source/contract/chat_data_source.dart';
 import 'package:chat/data/firebase/chats_service.dart';
 import 'package:chat/data/models/chat_and_users.dart';
+import 'package:chat/data/models/message_model.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -37,5 +38,21 @@ class ChatDataSourceImpl implements ChatDataSource {
 
       return Success(user);
     });
+  }
+
+  @override
+  Future<Results<MessageModel>> addMessaged({
+    required String chatId,
+    required MessageModel message,
+  }) async {
+    return safeCall(() async {
+      await _chatsService.addMessagesToFirestore(chatId, message);
+      return Success(null);
+    });
+  }
+
+  @override
+  Stream<List<MessageModel>> getMessages({required String chatId}) {
+    return _chatsService.getMessagesStream(chatId);
   }
 }

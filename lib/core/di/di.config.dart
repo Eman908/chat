@@ -24,7 +24,8 @@ import '../../data/repo/chat_repo_impl.dart' as _i149;
 import '../../domain/repo/auth_repo.dart' as _i716;
 import '../../domain/repo/chat_repo.dart' as _i949;
 import '../../presentation/auth/cubit/auth_cubit.dart' as _i1063;
-import '../../presentation/chat/cubit/chat_cubit.dart' as _i207;
+import '../../presentation/chat/chat_cubit/chat_cubit.dart' as _i870;
+import '../../presentation/chat/messages_cubit/messages_cubit.dart' as _i505;
 import '../theme/theme_provider.dart' as _i416;
 import 'modules/shared_preference_module.dart' as _i890;
 
@@ -42,7 +43,8 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i416.ThemeProvider>(() => _i416.ThemeProvider());
     gh.factory<_i1063.AuthCubit>(() => _i1063.AuthCubit());
-    gh.factory<_i207.ChatCubit>(() => _i207.ChatCubit());
+    gh.factory<_i870.ChatCubit>(() => _i870.ChatCubit());
+    gh.factory<_i505.MessagesCubit>(() => _i505.MessagesCubit());
     gh.singleton<_i668.ChatsService>(() => _i668.ChatsService());
     gh.singleton<_i73.FirebaseService>(() => _i73.FirebaseService());
     gh.factory<_i949.ChatRepo>(() => _i149.ChatRepoImpl());

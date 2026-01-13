@@ -11,14 +11,16 @@ class ChatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, Routes.chat);
+        Navigator.pushNamed(
+          context,
+          Routes.chat,
+          arguments: {'chatId': chatModel.chatId, 'otherUserName': user.name},
+        );
       },
       child: ListTile(
         leading: CircleAvatar(child: Text(user.name?[0] ?? '')),
         title: Text(user.name ?? 'unknown'),
-        subtitle: chatModel.lastMessage == null
-            ? const Text('No Messages Yet')
-            : Text(chatModel.lastMessage!),
+        subtitle: Text(chatModel.lastMessage!),
         trailing: const Icon(Icons.arrow_forward_ios),
       ),
     );

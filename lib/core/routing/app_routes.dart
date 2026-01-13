@@ -25,7 +25,13 @@ abstract class AppRoutes {
       case Routes.chat:
         return MaterialPageRoute(
           settings: settings,
-          builder: (context) => const ChatView(),
+          builder: (context) {
+            final args = settings.arguments as Map<String, dynamic>?;
+            return ChatView(
+              chatId: args!['chatId']! as String,
+              name: args['otherUserName'] as String,
+            );
+          },
         );
       case Routes.register:
         return MaterialPageRoute(

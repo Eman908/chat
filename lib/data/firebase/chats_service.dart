@@ -1,6 +1,7 @@
 import 'package:chat/core/constants/app_constants.dart';
 import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/chat_model.dart';
+import 'package:chat/data/models/message_model.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
@@ -25,6 +26,35 @@ class ChatsService {
           fromFirestore: (snapshot, _) => ChatModel.fromJson(snapshot.data()!),
           toFirestore: (model, _) => model.toJson(),
         );
+  }
+
+  CollectionReference<MessageModel> _getMessagesCollection(String chatId) {
+    return _firestore
+        .collection(AppConstants.kChatCollection)
+        .doc(chatId)
+        .collection(AppConstants.kMessagesCollection)
+        .withConverter(
+          fromFirestore: (snapshot, _) =>
+              MessageModel.fromJson(snapshot.data()!),
+          toFirestore: (model, _) => model.toJson(),
+        );
+  }
+
+  Future<void> addMessagesToFirestore(
+    String chatId,
+    MessageModel messageModel,
+  ) async {
+    await _getChatsCollection().doc(chatId).update({
+      'lastMessage': messageModel.message,
+    });
+    await _getMessagesCollection(chatId).add(messageModel);
+  }
+
+  Stream<List<MessageModel>> getMessagesStream(String chatId) {
+    return _getMessagesCollection(chatId)
+        .orderBy('time', descending: true)
+        .snapshots()
+        .map((e) => e.docs.map((doc) => doc.data()).toList());
   }
 
   Future<void> addUserToFirestore(UserModel user) {
@@ -65,7 +95,6 @@ class ChatsService {
   }) async {
     try {
       final chatId = _buildChatId(currentUserId, otherUserId);
-
       final existingChat = await _getChatsCollection().doc(chatId).get();
       if (existingChat.exists) {
         throw Exception('Chat already exists');
@@ -73,7 +102,7 @@ class ChatsService {
 
       final chat = ChatModel(
         chatId: chatId,
-        lastMessage: 'No messages yet',
+        lastMessage: '',
         participants: [currentUserId, otherUserId],
       );
 

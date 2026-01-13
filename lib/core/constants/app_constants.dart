@@ -6,4 +6,5 @@ abstract class AppConstants {
   static const String kEmail = 'email';
   static const String kUsersCollection = 'users';
   static const String kChatCollection = 'chats';
+  static const String kMessagesCollection = 'messages';
 }

@@ -6,8 +6,8 @@ import 'package:chat/core/theme/app_colors.dart';
 import 'package:chat/core/theme/theme_provider.dart';
 import 'package:chat/data/firebase/firebase_service.dart';
 import 'package:chat/presentation/auth/widgets/custom_text_field.dart';
-import 'package:chat/presentation/chat/cubit/chat_cubit.dart';
-import 'package:chat/presentation/chat/cubit/chat_state.dart';
+import 'package:chat/presentation/chat/chat_cubit/chat_cubit.dart';
+import 'package:chat/presentation/chat/chat_cubit/chat_state.dart';
 import 'package:chat/presentation/chat/widgets/chat_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -149,7 +149,6 @@ class _HomeViewState extends State<HomeView> {
               backgroundColor: context.color.error,
             ),
           );
-          // cubit.loadChatsAndUsers();
         }
       },
     );

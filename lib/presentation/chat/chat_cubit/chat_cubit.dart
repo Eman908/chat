@@ -4,7 +4,7 @@ import 'package:chat/core/error/results.dart';
 import 'package:chat/data/models/chat_and_users.dart';
 import 'package:chat/data/models/user_model.dart';
 import 'package:chat/domain/repo/chat_repo.dart';
-import 'package:chat/presentation/chat/cubit/chat_state.dart';
+import 'package:chat/presentation/chat/chat_cubit/chat_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
