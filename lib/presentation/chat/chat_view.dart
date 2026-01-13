@@ -28,7 +28,6 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     cubit = context.read<MessagesCubit>();
     _messagesStream = getIt<ChatRepo>().getMessages(chatId: widget.chatId);
@@ -36,7 +35,6 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     message.dispose();
     _focusNode.dispose();
